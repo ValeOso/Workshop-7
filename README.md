@@ -1,5 +1,49 @@
 # Workshop # 7 Automatización
-Integrantes:
-Brayan David Acosta Gomez y Valentina Osorio Lopez
 
-## Identificación del modelo basico IOT
+Integrantes:
+Brayan David Acosta Gomez 
+Valentina Osorio Lopez
+
+## Implementación de la configuración maestro-esclavo conectado vía protocolo I2C. 
+
+### Introducción
+Con la llegada del internet de las cosas y la necesidad del aprovechamiento de pines de los diferentes microcontroladores fueron unas de las razones por las cuales el protocolo de comunicación I2C con Arduino es ampliamente utilizado en multitud de sensores y actuadores en la actualidad a pesar de su antigüedad. 
+![Que es el protocolo serial I2C? - YouTube](https://i.ytimg.com/vi/r5rEDutaxkA/maxresdefault.jpg)
+**I2C** ( _Inter-Integrated Circuit_) es un protocolo de comunicación serial que funciona con una arquitectura maestro-esclavo (_master-slave_) como se aprecia en el gráfico se emplean únicamente dos pines para la comunicación los cuales son SDA: utilizado para el intercambio de datos y SCL: empleado como señal de reloj.
+
+A continuación se presenta el proceso y desarrollo de una configuración maestro esclavo con dos Arduinos comunicados por protocolo I2C donde el esclavo se encargara de leer el estado de un sensor de temperatura enviando dicha información cada segundo al maestro el cual encenderá un led cada vez que dicha temperatura supere los 30 grados.
+
+### Diagrama
+Para el diseño de la arquitectura optamos por utilizar la herramienta de TinkerCad la cual nos permitió realizar el montaje basado en la configuración presentada por el docente, posterior a esto también se logro programar y simular con los componentes requeridos (los cuales seran explicados más adelante) de manera previa al montaje y ejecución del "Real-Hardware".
+![](https://cdn.discordapp.com/attachments/472586238096965646/976290606945013840/unknown.png)
+ 
+ ### Componentes y Librerías
+ Los componentes y módulos utilizados fueron seleccionados teniendo en cuenta que soportarán comunicación I2C.
+ - Arduino UNO (2 unidades)
+ - Sensor de Temperatura LM35
+ - Protoboards (2 unidades)
+ - Diodo Led
+ - Resistencia
+ - Cables y Jumpers
+ 
+ Para los Arduino UNO utilizados se identificaron los pines SDA y SCL los cuales corresponden a A4 (SDA), A5 (SCL); Logramos medir la lectura del sensor LM35 usando una de las entradas del ADC del microcontrolador que en este caso fue el pin A0 en el cual para poder calcular la temperatura fue necesario conocer que cada 10 mv a partir de 0v representa 1 grado Celsius y se presenta la siguiente formula **float temperatura = (analogRead(A0) * 500) / 1024** sin embargo al utilizar esta forma de capturar la temperatura se presentaban variaciones muy bruscas así que implementamos otra forma colocando una sentencia **analogReference(INTERNAL)** que convertía 1024 del ADC de 5000 mV a 1100 mV y el funcionamiento mejoro considerablemente. 
+
+Finalmente se importo y uso La **librería**  **_Wire_** una herramienta indispensable para interactuar con el **bus I2C**  **con arduino** de forma simple e intuitiva. Esta librería se utiliza para comunicar la placa arduino con dispositivos que trabajan mediante el protocolo I2C/TWI. Se usaron algunas de las funciones principales como:
+
+- Wire.begin()
+- Wire.beginTransmission()
+- Wire.write()
+- Wire.endTransmission()
+- Wire.onRequest()
+- Wire.read()
+- Wire.available()
+
+
+ ### Documentación Código
+
+### Referencias
+Carmenate, J. G. (2022, 13 enero).  _Comunicación I2C con Arduino lo mejor de 2 mundos_. Programar fácil con Arduino. https://programarfacil.com/blog/arduino-blog/comunicacion-i2c-con-arduino/amp/
+
+Gómez, E. (2021, 6 mayo).  _Medir temperatura con sensor LM35_. Rincón Ingenieril. https://www.rinconingenieril.es/medir-temperatura-con-sensor-lm35/
+
+_LIBRERIA Wire ARDUINO_. (2019). Techamc. http://techamc.es/ARDUINO/PROGRAMACION/LIBRERIAS/LIBRERIA_Wire_ARDUINO.htm
