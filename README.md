@@ -40,6 +40,81 @@ Finalmente se importo y uso La **librería**  **_Wire_** una herramienta indispe
 
 
  ### Documentación Código
+ Primero se realizó la programación del Arduino que haría de maestro, siendo el encargado de recoger la información del esclavo y validar constantemente si la temperatura es igual o mayor a 30 para encender un led indicativo.
+
+Para esto utilizamos la librería wire y se configuró como maestro.
+    
+    //Libreria comunicacion I2C
+    #include <Wire.h>
+    #define LED 13 //Define blinking LED pin
+    // SETUP DEL PROYECTO
+    void setup(){
+      Serial.begin(9600);
+      pinMode(LED, OUTPUT); //SE ESTABLECE PIN 13 COMO SALIDA
+      Wire.begin(); //INICIAMOS LA COMUNICACION 
+    }
+    
+    void loop(){
+      Wire.beginTransmission(1); //INICIAMOS LA TRASMICION
+      Wire.write('S');
+      Wire.endTransmission();
+      Wire.requestFrom(1, 1);   
+      byte len = Wire.read();
+      Wire.requestFrom(1, (int)len);
+      String temperatura="";
+      while (Wire.available()) { // LECTURA DE LOS DATOS
+        char c = Wire.read();   
+        temp = temperatura+c;
+      }
+      
+      float tempeFloat = temp.toFloat();  
+      Serial.println(tempeFloat);
+      if(tempeFloat>=30){ //VALIDACION TEMPERATURA
+        digitalWrite(LED, 0);
+      }else{
+        digitalWrite(LED, 1);
+      }
+      delay(1000);
+    }
+Finalmente, para la programación del Arduino como esclavo, el cual será el encargado de leer y transformar la información del sensor de temperatura para luego ser enviada al maestro. De igual forma se utiliza la librería wire para la comunicación i2c pero configurado como esclavo.
+    //Libreria comunicacion I2C
+    #include <Wire.h>
+    bool S=false;
+    int sensor = 0;
+    float temperatura = 0.0;
+    
+    // SETUP DEL PROYECTO
+    void setup(){
+      Serial.begin(9600); // INICIO DE SERIAL PARA VER LOS DATOS
+      Wire.begin(1); //INICIAMOS LA COMUNICACION 
+      Wire.onRequest(eventoSolicitud);
+      Wire.onReceive(receiveEvent); 
+    }
+    
+    void loop(){
+      sensor = analogRead(0);
+      temperatura = (lectura * 500.0)/1024.0;
+      Serial.println(temp);
+      delay(1000);
+    }
+    
+    void receiveEvent(int howMany){
+      if( Wire.read() == 'S' ){
+        S = true;
+      } 
+    }
+    
+    void eventoSolicitud() {
+      if( S == true ){
+        Wire.write(String(temp, 3).length());
+        S = false;
+      }
+      else{
+        Serial.println(String(temp, 3));
+        Wire.println(String(temp, 3));
+      }
+    }
+
 
 ### Referencias
 Carmenate, J. G. (2022, 13 enero).  _Comunicación I2C con Arduino lo mejor de 2 mundos_. Programar fácil con Arduino. https://programarfacil.com/blog/arduino-blog/comunicacion-i2c-con-arduino/amp/
