@@ -77,6 +77,7 @@ Para esto utilizamos la librería wire y se configuró como maestro.
       delay(1000);
     }
 Finalmente, para la programación del Arduino como esclavo, el cual será el encargado de leer y transformar la información del sensor de temperatura para luego ser enviada al maestro. De igual forma se utiliza la librería wire para la comunicación i2c pero configurado como esclavo.
+
     //Libreria comunicacion I2C
     #include <Wire.h>
     bool S=false;
